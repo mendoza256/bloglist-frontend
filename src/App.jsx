@@ -5,13 +5,13 @@ import BlogForm from "./components/BlogForm";
 import LoginForm from "./components/LoginForm";
 import Notification from "./components/Notification";
 import Blogs from "./components/Blogs";
+import "./styles.css";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
-
-  console.log("user", user);
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -34,16 +34,25 @@ const App = () => {
   return (
     <>
       <h1>Blogs</h1>
-      <Notification message={errorMessage} />
+      <Notification message={message} error={error} />
 
       {user === null ? (
-        <LoginForm user={user} setUser={setUser} />
+        <LoginForm
+          user={user}
+          setUser={setUser}
+          setMessage={setMessage}
+          setError={setError}
+        />
       ) : (
         <div>
           <p>{user.name} logged in</p>
           <button onClick={logout}>logout</button>
-          <Blogs user={user} blogs={blogs} />
-          <BlogForm />
+          <Blogs user={user} blogs={blogs} setBlogs={setBlogs} />
+          <BlogForm
+            setBlogs={setBlogs}
+            setMessage={setMessage}
+            setError={setError}
+          />
         </div>
       )}
     </>
