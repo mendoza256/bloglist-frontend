@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 export const BlogForm = ({ newBlog, setNewBlog, addBlog }) => {
   return (
     <>
@@ -37,6 +39,12 @@ export const BlogForm = ({ newBlog, setNewBlog, addBlog }) => {
       </form>
     </>
   );
+};
+
+BlogForm.propTypes = {
+  newBlog: PropTypes.object.isRequired,
+  setNewBlog: PropTypes.func.isRequired,
+  addBlog: PropTypes.func.isRequired,
 };
 
 export default BlogForm;
