@@ -24,6 +24,12 @@ const Blog = ({ blog, setBlogs }) => {
     }
   };
 
+  const deleteBlog = async () => {
+    window.confirm(`Delete ${blog.title} by ${blog.author}?`);
+    await blogService.remove(blog.id);
+    setBlogs(await blogService.getAll());
+  };
+
   return (
     <div style={blogStyles}>
       <p>
@@ -37,6 +43,7 @@ const Blog = ({ blog, setBlogs }) => {
           <p>
             <span style={{ marginRight: "1rem" }}>likes: {blog.likes}</span>
             <button onClick={likeBlog}>like</button>
+            <button onClick={deleteBlog}>delete</button>
           </p>
           <div>
             <p>{blog.user?.username}</p>

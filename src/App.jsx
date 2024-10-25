@@ -16,6 +16,11 @@ const App = () => {
   const [newBlog, setNewBlog] = useState({});
   const blogFormRef = useRef();
 
+  const sortBlogsByLikes = () => {
+    const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
+    setBlogs(sortedBlogs);
+  };
+
   const addBlog = async (event) => {
     event.preventDefault();
     try {
@@ -23,9 +28,11 @@ const App = () => {
       setBlogs(await blogService.getAll());
 
       setMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`);
+      setNewBlog({});
       blogFormRef.current.toggleVisibility();
     } catch (exception) {
       setError("Error creating blog:", exception);
+      setNewBlog({});
     }
 
     setTimeout(() => {
@@ -80,6 +87,8 @@ const App = () => {
             />
           </Togglable>
           <button onClick={logout}>logout</button>
+          <button onClick={sortBlogsByLikes}>Sort by Likes (Descending)</button>
+
           <Blogs user={user} blogs={blogs} setBlogs={setBlogs} />
         </div>
       )}
