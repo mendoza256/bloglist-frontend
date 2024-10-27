@@ -8,6 +8,8 @@ export const BlogForm = ({ newBlog, setNewBlog, addBlog }) => {
         <div>
           <label htmlFor="title">Title:</label>
           <input
+            type="text"
+            placeholder="title"
             value={newBlog.title}
             onChange={({ target }) =>
               setNewBlog({ ...newBlog, title: target.value })
@@ -18,6 +20,8 @@ export const BlogForm = ({ newBlog, setNewBlog, addBlog }) => {
         <div>
           <label htmlFor="author">Author:</label>
           <input
+            type="text"
+            placeholder="author"
             value={newBlog.author}
             onChange={({ target }) =>
               setNewBlog({ ...newBlog, author: target.value })
@@ -28,6 +32,8 @@ export const BlogForm = ({ newBlog, setNewBlog, addBlog }) => {
         <div>
           <label htmlFor="url">Url:</label>
           <input
+            type="text"
+            placeholder="url"
             value={newBlog.url}
             onChange={({ target }) =>
               setNewBlog({ ...newBlog, url: target.value })

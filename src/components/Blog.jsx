@@ -32,7 +32,7 @@ const Blog = ({ blog, setBlogs }) => {
   };
 
   return (
-    <div style={blogStyles}>
+    <div style={blogStyles} className="blog">
       <p>
         {blog.title} by {blog.author}
       </p>
