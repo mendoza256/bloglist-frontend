@@ -42,3 +42,27 @@ test("after clicking the button, children are displayed", async () => {
   expect(div).toHaveTextContent("Test url");
   expect(div).toHaveTextContent("likes: 0");
 });
+
+test("clicking the like button twice calls event handler twice", async () => {
+  const blog = {
+    author: "Test author",
+    title: "Test title",
+    url: "Test url",
+    likes: 0,
+  };
+
+  const mockHandler = vi.fn();
+
+  render(<Blog blog={blog} likeBlog={mockHandler} />);
+
+  const user = userEvent.setup();
+
+  const showButton = screen.getByText("show");
+  await user.click(showButton);
+
+  const likeButton = screen.getByText("like");
+  await user.click(likeButton);
+  await user.click(likeButton);
+
+  expect(mockHandler.mock.calls).toHaveLength(2);
+});

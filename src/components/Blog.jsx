@@ -2,33 +2,12 @@ import { useState } from "react";
 import blogService from "../services/blogs";
 import PropTypes from "prop-types";
 
-const Blog = ({ blog, setBlogs }) => {
+const Blog = ({ blog, likeBlog, deleteBlog }) => {
   const [showDetails, setShowDetails] = useState(false);
   const blogStyles = {
     border: "1px solid black",
     margin: "1rem 0",
     padding: "0.5rem",
-  };
-
-  const likeBlog = async () => {
-    const newBlog = {
-      ...blog,
-      user: blog.user?.id || null,
-      likes: blog.likes + 1,
-    };
-
-    try {
-      await blogService.update(blog.id, newBlog);
-      setBlogs(await blogService.getAll());
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const deleteBlog = async () => {
-    window.confirm(`Delete ${blog.title} by ${blog.author}?`);
-    await blogService.remove(blog.id);
-    setBlogs(await blogService.getAll());
   };
 
   return (
@@ -61,6 +40,7 @@ const Blog = ({ blog, setBlogs }) => {
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
   setBlogs: PropTypes.func.isRequired,
+  likeBlog: PropTypes.func.isRequired,
 };
 
 export default Blog;
