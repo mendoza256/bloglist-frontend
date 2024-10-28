@@ -13,7 +13,6 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(false);
-  const [newBlog, setNewBlog] = useState({});
   const blogFormRef = useRef();
 
   const sortBlogsByLikes = () => {
@@ -21,26 +20,22 @@ const App = () => {
     setBlogs(sortedBlogs);
   };
 
-  const addBlog = async (event) => {
-    event.preventDefault();
+  const addBlog = async (blog) => {
     try {
       await blogService.create(newBlog);
       setBlogs(await blogService.getAll());
 
       setMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`);
-      setNewBlog({});
+
       blogFormRef.current.toggleVisibility();
     } catch (exception) {
       setError("Error creating blog:", exception);
-      setNewBlog({});
     }
 
     setTimeout(() => {
       setMessage(null);
       setError(null);
     }, 5000);
-
-    setNewBlog({});
   };
 
   useEffect(() => {

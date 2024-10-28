@@ -1,37 +1,49 @@
 import PropTypes from "prop-types";
+import { useState } from "react";
 
-export const BlogForm = ({ newBlog, setNewBlog, addBlog }) => {
+export const BlogForm = ({ addBlog }) => {
+  const [newBlog, setNewBlog] = useState({});
+
+  const createBlog = (event) => {
+    event.preventDefault();
+    addBlog(newBlog);
+    setNewBlog({ title: "", author: "", url: "" });
+  };
+
   return (
     <>
       <h2>Create new blog</h2>
-      <form onSubmit={addBlog}>
+      <form onSubmit={createBlog}>
         <div>
           <label htmlFor="title">Title:</label>
           <input
+            aria-label="title"
+            id="title"
             type="text"
             placeholder="title"
             value={newBlog.title}
             onChange={({ target }) =>
               setNewBlog({ ...newBlog, title: target.value })
             }
-            id="title"
           />
         </div>
         <div>
           <label htmlFor="author">Author:</label>
           <input
+            aria-label="author"
+            id="author"
             type="text"
             placeholder="author"
             value={newBlog.author}
             onChange={({ target }) =>
               setNewBlog({ ...newBlog, author: target.value })
             }
-            id="author"
           />
         </div>
         <div>
           <label htmlFor="url">Url:</label>
           <input
+            aria-label="url"
             type="text"
             placeholder="url"
             value={newBlog.url}
