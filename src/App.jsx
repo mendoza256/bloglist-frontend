@@ -11,8 +11,8 @@ import Togglable from "./components/Toggable";
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
-  const [message, setMessage] = useState(null);
-  const [error, setError] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
   const blogFormRef = useRef();
 
   const sortBlogsByLikes = () => {
@@ -20,7 +20,7 @@ const App = () => {
     setBlogs(sortedBlogs);
   };
 
-  const addBlog = async (blog) => {
+  const addBlog = async (newBlog) => {
     try {
       await blogService.create(newBlog);
       setBlogs(await blogService.getAll());
@@ -58,7 +58,7 @@ const App = () => {
 
   return (
     <>
-      <h1>Welcome toBlogs</h1>
+      <h1>Welcome to Blogs</h1>
       <Notification message={message} error={error} />
 
       {user === null && (
@@ -73,20 +73,19 @@ const App = () => {
       )}
       {user && (
         <div>
-          <p>{user.name} logged in</p>
+          <p data-testid="user-logged-in">{user.name} logged in</p>
           <Togglable buttonLabel="new blog" ref={blogFormRef}>
-            <BlogForm
-              addBlog={addBlog}
-              newBlog={newBlog}
-              setNewBlog={setNewBlog}
-            />
+            <BlogForm addBlog={addBlog} />
           </Togglable>
           <button onClick={logout}>logout</button>
           <button onClick={sortBlogsByLikes}>Sort by Likes (Descending)</button>
 
-          <Blogs user={user} blogs={blogs} setBlogs={setBlogs} />
+          <Blogs blogs={blogs} setBlogs={setBlogs} user={user} />
         </div>
       )}
+      <div>
+        Blog app, Department of Computer Science, University of Helsinki 2023
+      </div>
     </>
   );
 };

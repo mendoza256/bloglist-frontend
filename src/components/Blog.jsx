@@ -1,8 +1,7 @@
 import { useState } from "react";
-import blogService from "../services/blogs";
 import PropTypes from "prop-types";
 
-const Blog = ({ blog, likeBlog, deleteBlog }) => {
+const Blog = ({ blog, likeBlog, deleteBlog, user }) => {
   const [showDetails, setShowDetails] = useState(false);
   const blogStyles = {
     border: "1px solid black",
@@ -10,8 +9,11 @@ const Blog = ({ blog, likeBlog, deleteBlog }) => {
     padding: "0.5rem",
   };
 
+  console.log("blog", blog);
+  console.log("user", user);
+
   return (
-    <div style={blogStyles} className="blog">
+    <div style={blogStyles} data-testid={blog.id} className="blog">
       <p>
         {blog.title} by {blog.author}
       </p>
@@ -21,9 +23,17 @@ const Blog = ({ blog, likeBlog, deleteBlog }) => {
             <p>{blog.url}</p>
           </div>
           <p>
-            <span style={{ marginRight: "1rem" }}>likes: {blog.likes}</span>
-            <button onClick={likeBlog}>like</button>
-            <button onClick={deleteBlog}>delete</button>
+            <span className="likes" style={{ marginRight: "1rem" }}>
+              likes: {blog.likes}
+            </span>
+            <button className="like" onClick={() => likeBlog(blog.id)}>
+              like
+            </button>
+            {blog.user.username == user.username && (
+              <button className="remove" onClick={() => deleteBlog(blog)}>
+                delete
+              </button>
+            )}
           </p>
           <div>
             <p>{blog.user?.username}</p>
@@ -39,8 +49,8 @@ const Blog = ({ blog, likeBlog, deleteBlog }) => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  setBlogs: PropTypes.func.isRequired,
   likeBlog: PropTypes.func.isRequired,
+  deleteBlog: PropTypes.func.isRequired,
 };
 
 export default Blog;

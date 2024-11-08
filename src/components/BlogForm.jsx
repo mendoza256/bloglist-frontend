@@ -18,6 +18,7 @@ export const BlogForm = ({ addBlog }) => {
           <label htmlFor="title">Title:</label>
           <input
             aria-label="title"
+            data-testid="title"
             id="title"
             type="text"
             placeholder="title"
@@ -31,6 +32,7 @@ export const BlogForm = ({ addBlog }) => {
           <label htmlFor="author">Author:</label>
           <input
             aria-label="author"
+            data-testid="author"
             id="author"
             type="text"
             placeholder="author"
@@ -44,6 +46,7 @@ export const BlogForm = ({ addBlog }) => {
           <label htmlFor="url">Url:</label>
           <input
             aria-label="url"
+            data-testid="url"
             type="text"
             placeholder="url"
             value={newBlog.url}
@@ -60,8 +63,6 @@ export const BlogForm = ({ addBlog }) => {
 };
 
 BlogForm.propTypes = {
-  newBlog: PropTypes.object.isRequired,
-  setNewBlog: PropTypes.func.isRequired,
   addBlog: PropTypes.func.isRequired,
 };
 
