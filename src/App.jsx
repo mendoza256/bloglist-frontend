@@ -12,7 +12,7 @@ import { createNewBlog, intitializeBlogs } from "./reducers/blogsReducer";
 
 const App = () => {
   const dispatch = useDispatch();
-  const [user, setUser] = useState(null);
+  const user = useSelector((state) => state.user);
   const [error, setError] = useState("");
   const [sortByLikes, setSortByLikes] = useState(false);
   const blogFormRef = useRef();
