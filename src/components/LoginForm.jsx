@@ -2,13 +2,17 @@ import React, { useState } from "react";
 import loginService from "../services/login";
 import blogService from "../services/blogs";
 import PropTypes from "prop-types";
+import { useDispatch } from "react-redux";
+import { setNotification } from "../reducers/notificationReducer";
 
-const LoginForm = ({ setUser, setMessage, setError }) => {
+const LoginForm = ({ setUser, setError }) => {
+  const dispatch = useDispatch();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async (event) => {
     event.preventDefault();
+
     try {
       const user = await loginService.login({
         username,
@@ -20,9 +24,10 @@ const LoginForm = ({ setUser, setMessage, setError }) => {
       setUser(user);
       setUsername("");
       setPassword("");
-      setMessage(`${user.name} logged in`);
+      dispatch(setNotification(`${user.name} logged in`, 2000));
     } catch (exception) {
       setError("Wrong credentials");
+      console.erro(exception);
       setTimeout(() => {
         setError(null);
       }, 5000);
@@ -62,7 +67,7 @@ const LoginForm = ({ setUser, setMessage, setError }) => {
 
 LoginForm.propTypes = {
   setUser: PropTypes.func.isRequired,
-  setMessage: PropTypes.func.isRequired,
+  setNotification: PropTypes.func.isRequired,
   setError: PropTypes.func.isRequired,
 };
 

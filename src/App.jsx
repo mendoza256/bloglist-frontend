@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-
 import blogService from "./services/blogs";
 import BlogForm from "./components/BlogForm";
 import LoginForm from "./components/LoginForm";
@@ -8,13 +7,15 @@ import Blogs from "./components/Blogs";
 import "./styles.css";
 import Togglable from "./components/Toggable";
 import { setNotification } from "./reducers/notificationReducer";
+import { useDispatch, useSelector } from "react-redux";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
-  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const blogFormRef = useRef();
+  const dispatch = useDispatch();
+  const message = useSelector((state) => state.notification);
 
   const sortBlogsByLikes = () => {
     const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
@@ -26,9 +27,11 @@ const App = () => {
       await blogService.create(newBlog);
       setBlogs(await blogService.getAll());
 
-      setNotification(
-        `a new blog ${newBlog.title} by ${newBlog.author} added`,
-        700
+      dispatch(
+        setNotification(
+          `a new blog ${newBlog.title} by ${newBlog.author} added`,
+          2000
+        )
       );
 
       blogFormRef.current.toggleVisibility();
@@ -37,7 +40,6 @@ const App = () => {
     }
 
     setTimeout(() => {
-      setMessage(null);
       setError(null);
     }, 5000);
   };
@@ -67,12 +69,7 @@ const App = () => {
 
       {user === null && (
         <Togglable buttonLabel={"Log in"}>
-          <LoginForm
-            user={user}
-            setUser={setUser}
-            setMessage={setMessage}
-            setError={setError}
-          />
+          <LoginForm user={user} setUser={setUser} setError={setError} />
         </Togglable>
       )}
       {user && (
