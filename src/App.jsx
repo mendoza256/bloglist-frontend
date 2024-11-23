@@ -30,7 +30,6 @@ const App = () => {
   const addBlog = async (newBlog) => {
     try {
       dispatch(createNewBlog(newBlog));
-
       dispatch(
         setNotification(
           `a new blog ${newBlog.title} by ${newBlog.author} added`,
