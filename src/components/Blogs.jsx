@@ -2,8 +2,11 @@ import React from "react";
 import Blog from "./Blog";
 import PropTypes from "prop-types";
 import blogService from "../services/blogs";
+import { useDispatch } from "react-redux";
+import { intitializeBlogs } from "../reducers/blogsReducer";
 
-const Blogs = ({ blogs, setBlogs, user }) => {
+const Blogs = ({ blogs, user }) => {
+  const dispatch = useDispatch();
   const likeBlog = async (id) => {
     console.log("blogid", id);
     const blog = blogs.find((blog) => blog.id === id);
@@ -17,7 +20,7 @@ const Blogs = ({ blogs, setBlogs, user }) => {
 
     try {
       await blogService.update(blog.id, updatedBlog);
-      setBlogs(await blogService.getAll());
+      dispatch(intitializeBlogs());
     } catch (error) {
       console.log(error);
     }
@@ -27,7 +30,7 @@ const Blogs = ({ blogs, setBlogs, user }) => {
     console.log("delete", blog);
     window.confirm(`Delete ${blog.title} by ${blog.author}?`);
     await blogService.remove(blog.id);
-    setBlogs(await blogService.getAll());
+    dispatch(intitializeBlogs());
   };
 
   return (
@@ -47,7 +50,6 @@ const Blogs = ({ blogs, setBlogs, user }) => {
 
 Blogs.propTypes = {
   blogs: PropTypes.array.isRequired,
-  setBlogs: PropTypes.func.isRequired,
 };
 
 export default Blogs;

@@ -67,7 +67,6 @@ const LoginForm = ({ setUser, setError }) => {
 
 LoginForm.propTypes = {
   setUser: PropTypes.func.isRequired,
-  setNotification: PropTypes.func.isRequired,
   setError: PropTypes.func.isRequired,
 };
 

@@ -8,24 +8,28 @@ import "./styles.css";
 import Togglable from "./components/Toggable";
 import { setNotification } from "./reducers/notificationReducer";
 import { useDispatch, useSelector } from "react-redux";
+import { createNewBlog, intitializeBlogs } from "./reducers/blogsReducer";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
+  const dispatch = useDispatch();
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
+  const [sortByLikes, setSortByLikes] = useState(false);
   const blogFormRef = useRef();
-  const dispatch = useDispatch();
   const message = useSelector((state) => state.notification);
+  const blogs = useSelector((state) =>
+    sortByLikes
+      ? state.blogs.toSorted((a, b) => b.likes - a.likes)
+      : state.blogs
+  );
 
-  const sortBlogsByLikes = () => {
-    const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
-    setBlogs(sortedBlogs);
-  };
+  useEffect(() => {
+    dispatch(intitializeBlogs());
+  }, []);
 
   const addBlog = async (newBlog) => {
     try {
-      await blogService.create(newBlog);
-      setBlogs(await blogService.getAll());
+      dispatch(createNewBlog(newBlog));
 
       dispatch(
         setNotification(
@@ -45,10 +49,6 @@ const App = () => {
   };
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
-
-  useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
@@ -56,6 +56,10 @@ const App = () => {
       blogService.setToken(user.token);
     }
   }, []);
+
+  const handleSortByLikes = () => {
+    setSortByLikes(!sortByLikes);
+  };
 
   const logout = () => {
     setUser(null);
@@ -79,9 +83,11 @@ const App = () => {
             <BlogForm addBlog={addBlog} />
           </Togglable>
           <button onClick={logout}>logout</button>
-          <button onClick={sortBlogsByLikes}>Sort by Likes (Descending)</button>
+          <button onClick={handleSortByLikes}>
+            Sort by Likes (Descending)
+          </button>
 
-          <Blogs blogs={blogs} setBlogs={setBlogs} user={user} />
+          <Blogs blogs={blogs} user={user} />
         </div>
       )}
       <div>
