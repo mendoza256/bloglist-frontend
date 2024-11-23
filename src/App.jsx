@@ -7,6 +7,7 @@ import Notification from "./components/Notification";
 import Blogs from "./components/Blogs";
 import "./styles.css";
 import Togglable from "./components/Toggable";
+import { setNotification } from "./reducers/notificationReducer";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -25,7 +26,10 @@ const App = () => {
       await blogService.create(newBlog);
       setBlogs(await blogService.getAll());
 
-      setMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`);
+      setNotification(
+        `a new blog ${newBlog.title} by ${newBlog.author} added`,
+        700
+      );
 
       blogFormRef.current.toggleVisibility();
     } catch (exception) {

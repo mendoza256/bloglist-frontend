@@ -9,9 +9,6 @@ const Blog = ({ blog, likeBlog, deleteBlog, user }) => {
     padding: "0.5rem",
   };
 
-  console.log("blog", blog);
-  console.log("user", user);
-
   return (
     <div style={blogStyles} data-testid={blog.id} className="blog">
       <p>
