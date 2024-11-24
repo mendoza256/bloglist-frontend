@@ -9,6 +9,7 @@ import Togglable from "./components/Toggable";
 import { setNotification } from "./reducers/notificationReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { createNewBlog, intitializeBlogs } from "./reducers/blogsReducer";
+import { login, logout } from "./reducers/userReducer";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -51,7 +52,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      setUser(user);
+      login(user);
       blogService.setToken(user.token);
     }
   }, []);
@@ -60,8 +61,8 @@ const App = () => {
     setSortByLikes(!sortByLikes);
   };
 
-  const logout = () => {
-    setUser(null);
+  const logoutUser = () => {
+    logout(null);
     window.localStorage.removeItem("loggedBlogappUser");
   };
 
@@ -72,7 +73,7 @@ const App = () => {
 
       {user === null && (
         <Togglable buttonLabel={"Log in"}>
-          <LoginForm user={user} setUser={setUser} setError={setError} />
+          <LoginForm user={user} setError={setError} />
         </Togglable>
       )}
       {user && (
@@ -81,7 +82,7 @@ const App = () => {
           <Togglable buttonLabel="new blog" ref={blogFormRef}>
             <BlogForm addBlog={addBlog} />
           </Togglable>
-          <button onClick={logout}>logout</button>
+          <button onClick={logoutUser}>logout</button>
           <button onClick={handleSortByLikes}>
             Sort by Likes (Descending)
           </button>

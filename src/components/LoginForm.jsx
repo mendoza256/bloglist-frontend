@@ -4,8 +4,9 @@ import blogService from "../services/blogs";
 import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
 import { setNotification } from "../reducers/notificationReducer";
+import { loginUser } from "../reducers/userReducer";
 
-const LoginForm = ({ setUser, setError }) => {
+const LoginForm = ({ setError }) => {
   const dispatch = useDispatch();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -14,14 +15,12 @@ const LoginForm = ({ setUser, setError }) => {
     event.preventDefault();
 
     try {
-      const user = await loginService.login({
+      const userObject = {
         username,
         password,
-      });
+      };
 
-      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
-      blogService.setToken(user.token);
-      setUser(user);
+      dispatch(loginUser(userObject));
       setUsername("");
       setPassword("");
       dispatch(setNotification(`${user.name} logged in`, 2000));
@@ -66,7 +65,6 @@ const LoginForm = ({ setUser, setError }) => {
 };
 
 LoginForm.propTypes = {
-  setUser: PropTypes.func.isRequired,
   setError: PropTypes.func.isRequired,
 };
 
