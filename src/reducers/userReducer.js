@@ -17,13 +17,19 @@ export const userSlice = createSlice({
 
 export const { login, logout } = userSlice.actions;
 
-// TODO add user login, logout, remove setUsers
 export const loginUser = (userObject) => {
   return async (dispatch) => {
     const user = await loginService.login(userObject);
     window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
     blogService.setToken(user.token);
     dispatch(login(user));
+  };
+};
+
+export const logoutUser = () => {
+  return async (dispatch) => {
+    window.localStorage.removeItem("loggedBlogappUser");
+    dispatch(logout);
   };
 };
 

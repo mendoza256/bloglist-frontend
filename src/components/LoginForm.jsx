@@ -23,10 +23,10 @@ const LoginForm = ({ setError }) => {
       dispatch(loginUser(userObject));
       setUsername("");
       setPassword("");
-      dispatch(setNotification(`${user.name} logged in`, 2000));
+      dispatch(setNotification(`${username} logged in`, 2000));
     } catch (exception) {
       setError("Wrong credentials");
-      console.erro(exception);
+      console.error(exception);
       setTimeout(() => {
         setError(null);
       }, 5000);
