@@ -12,10 +12,13 @@ export const userSlice = createSlice({
     logout(state, action) {
       return null;
     },
+    set(state, action) {
+      return action.payload;
+    },
   },
 });
 
-export const { login, logout } = userSlice.actions;
+export const { login, logout, set } = userSlice.actions;
 
 export const loginUser = (userObject) => {
   return async (dispatch) => {
@@ -23,6 +26,12 @@ export const loginUser = (userObject) => {
     window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
     blogService.setToken(user.token);
     dispatch(login(user));
+  };
+};
+
+export const setUser = (user) => {
+  return async (dispatch) => {
+    dispatch(set(user));
   };
 };
 
