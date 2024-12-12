@@ -1,4 +1,4 @@
-import { useReducer, createContext, useContext } from "react";
+import { useReducer, createContext, useContext, useMemo } from "react";
 import {
   notificationInitialState,
   notificationReducer,
@@ -12,11 +12,10 @@ const NotificationContextProvider = ({ children }) => {
     notificationReducer,
     notificationInitialState
   );
-
-  console.log("state at NotificationContextProvider", state);
+  const value = useMemo(() => [state, dispatch], [state]);
 
   return (
-    <NotificationContext.Provider value={{ state, dispatch }}>
+    <NotificationContext.Provider value={value}>
       {children}
     </NotificationContext.Provider>
   );
@@ -28,7 +27,7 @@ const useNotificationContext = () => {
     throw new Error("useAppContext must be used within a AppContextProvider");
   }
 
-  const { state, dispatch } = context;
+  const [state, dispatch] = context;
   const notificationContextActions = notificationActions(dispatch);
   return { state, notificationContextActions };
 };

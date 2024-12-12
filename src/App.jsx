@@ -25,7 +25,12 @@ const App = () => {
       : state.blogs
   );
 
-  console.log(notificationState, message, error);
+  console.log(
+    "notificationState, message, error",
+    notificationState,
+    message,
+    error
+  );
 
   useEffect(() => {
     dispatch(intitializeBlogs());

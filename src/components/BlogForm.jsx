@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 
 export const BlogForm = ({ addBlog }) => {
-  const [newBlog, setNewBlog] = useState({});
+  const [newBlog, setNewBlog] = useState({ title: "", author: "", url: "" });
 
   const createBlog = (event) => {
     event.preventDefault();
