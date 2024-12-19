@@ -18,8 +18,12 @@ export const { setBlogs, appendBlog } = blogsSlice.actions;
 
 export const createNewBlog = (blog) => {
   return async (dispatch) => {
-    const newBlog = await blogService.create(blog);
-    dispatch(appendBlog(newBlog));
+    try {
+      const newBlog = await blogService.create(blog);
+      dispatch(appendBlog(newBlog));
+    } catch (error) {
+      throw new Error("Error creating blog");
+    }
   };
 };
 
@@ -47,9 +51,13 @@ export const likeBlog = (id) => {
 
 export const deleteBlog = (id) => {
   return async (dispatch, getState) => {
-    await blogService.remove(id);
-    const newState = getState().blogs.filter((blog) => blog.id !== id);
-    dispatch(setBlogs(newState));
+    try {
+      await blogService.remove(id);
+      const newState = getState().blogs.filter((blog) => blog.id !== id);
+      dispatch(setBlogs(newState));
+    } catch (error) {
+      throw new Error("You don't have permission to delete this blog");
+    }
   };
 };
 

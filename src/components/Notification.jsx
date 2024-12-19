@@ -1,11 +1,24 @@
-import React, { useReducer } from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
+import { useNotificationContext } from "../contexts/notificationContext";
 
-const Notification = ({ message, error }) => {
+const Notification = () => {
+  const { state, notificationContextActions } = useNotificationContext();
+
+  useEffect(() => {
+    if (state.message || state.error) {
+      const timer = setTimeout(() => {
+        notificationContextActions.reset();
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [state.message, state.error]);
+
   return (
     <>
-      {error && <div className="error">{error}</div>}
-      {message && <div className="message">{message}</div>}
+      {state.error && <div className="error">{state.error}</div>}
+      {state.message && <div className="message">{state.message}</div>}
     </>
   );
 };

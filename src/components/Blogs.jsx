@@ -7,23 +7,30 @@ import { useNotificationContext } from "../Contexts/notificationContext";
 
 const Blogs = ({ blogs, user }) => {
   const dispatch = useDispatch();
-  const { state: notificationState, notificationContextActions } =
-    useNotificationContext();
-  const { message, error } = notificationState;
+  const { notificationContextActions } = useNotificationContext();
   const handleLikeBlog = async (id) => {
     try {
       dispatch(likeBlog(id));
     } catch (error) {
-      console.log(error);
+      notificationContextActions.createError(error);
     }
   };
 
   const handleDeleteBlog = async (blog) => {
-    window.confirm(`Delete ${blog.title} by ${blog.author}?`);
-    dispatch(deleteBlog(blog.id));
-    notificationContextActions.notification.createMessage(
-      `Deleted ${blog.title} by ${blog.author}!`
-    );
+    if (!window.confirm(`Delete ${blog.title} by ${blog.author}?`)) {
+      return;
+    }
+
+    try {
+      dispatch(deleteBlog(blog.id));
+      notificationContextActions.createMessage(
+        `Deleted ${blog.title} by ${blog.author}!`
+      );
+    } catch (error) {
+      notificationContextActions.createError(
+        "You don't have permission to delete this blog"
+      );
+    }
   };
 
   return (

@@ -5,7 +5,6 @@ export const notificationInitialState = {
 };
 
 export function notificationReducer(state, action) {
-  console.log("notificationReducer", state, action);
   switch (action.type) {
     case actionTypes.CREATE_MESSAGE:
       return { ...state, message: action.payload };

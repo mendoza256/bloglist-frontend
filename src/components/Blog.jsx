@@ -9,6 +9,8 @@ const Blog = ({ blog, handleLikeBlog, handleDeleteBlog, user }) => {
     padding: "0.5rem",
   };
 
+  console.log(blog.user.username);
+
   return (
     <div style={blogStyles} data-testid={blog.id} className="blog">
       <p>
@@ -26,7 +28,7 @@ const Blog = ({ blog, handleLikeBlog, handleDeleteBlog, user }) => {
             <button className="like" onClick={() => handleLikeBlog(blog.id)}>
               like
             </button>
-            {blog.user.name == user.name && (
+            {blog.user.username === user.username && (
               <button className="remove" onClick={() => handleDeleteBlog(blog)}>
                 delete
               </button>

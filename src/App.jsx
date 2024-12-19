@@ -13,9 +13,7 @@ import { useNotificationContext } from "./Contexts/notificationContext";
 
 const App = () => {
   const dispatch = useDispatch();
-  const { state: notificationState, notificationContextActions } =
-    useNotificationContext();
-  const { message, error } = notificationState;
+  const { notificationContextActions } = useNotificationContext();
   const user = useSelector((state) => state.user);
   const [sortByLikes, setSortByLikes] = useState(false);
   const blogFormRef = useRef();
@@ -25,13 +23,6 @@ const App = () => {
       : state.blogs
   );
 
-  console.log(
-    "notificationState, message, error",
-    notificationState,
-    message,
-    error
-  );
-
   useEffect(() => {
     dispatch(intitializeBlogs());
   }, []);
@@ -39,17 +30,16 @@ const App = () => {
   const addBlog = async (newBlog) => {
     try {
       dispatch(createNewBlog(newBlog));
-      notificationContextActions.notification.createMessage("New blog created");
+      notificationContextActions.createMessage(
+        `New blog created: ${newBlog.title} by ${newBlog.author}`
+      );
 
       blogFormRef.current.toggleVisibility();
     } catch (exception) {
-      notificationContextActions.notification.createError(
-        "Error creating blog:",
-        exception
-      );
+      notificationContextActions.createError("Error creating blog:", exception);
     }
 
-    notificationContextActions.notification.reset();
+    notificationContextActions.reset();
   };
 
   useEffect(() => {
@@ -74,13 +64,13 @@ const App = () => {
   return (
     <>
       <h1>Welcome to Blogs</h1>
-      <Notification message={message} error={error} />
+      <Notification />
 
       {user === null && (
         <Togglable buttonLabel={"Log in"}>
           <LoginForm
             user={user}
-            setError={notificationContextActions.notification.createError}
+            setError={notificationContextActions.createError}
           />
         </Togglable>
       )}
