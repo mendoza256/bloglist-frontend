@@ -1,24 +1,26 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
-import { useNotificationContext } from "../contexts/notificationContext";
+import { useNotification } from "../contexts/notificationContext";
 
 const Notification = () => {
-  const { state, notificationContextActions } = useNotificationContext();
+  const [notification, dispatchNotification] = useNotification();
 
   useEffect(() => {
-    if (state.message || state.error) {
+    if (notification.message || notification.error) {
       const timer = setTimeout(() => {
-        notificationContextActions.reset();
+        dispatchNotification({ type: "CLEAR" });
       }, 3000);
 
       return () => clearTimeout(timer);
     }
-  }, [state.message, state.error]);
+  }, [notification.message, notification.error, dispatchNotification]);
 
   return (
     <>
-      {state.error && <div className="error">{state.error}</div>}
-      {state.message && <div className="message">{state.message}</div>}
+      {notification.error && <div className="error">{notification.error}</div>}
+      {notification.message && (
+        <div className="message">{notification.message}</div>
+      )}
     </>
   );
 };

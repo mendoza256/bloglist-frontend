@@ -1,35 +1,39 @@
-import { useReducer, createContext, useContext, useMemo } from "react";
-import {
-  notificationInitialState,
-  notificationReducer,
-} from "./notificationReducer";
-import notificationActions from "./notificationActions";
+import { createContext, useReducer, useContext } from "react";
+
+const notificationReducer = (state, action) => {
+  switch (action.type) {
+    case "SET_MESSAGE":
+      return { ...state, message: action.payload, error: "" };
+    case "SET_ERROR":
+      return { ...state, error: action.payload, message: "" };
+    case "CLEAR":
+      return { message: "", error: "" };
+    default:
+      return state;
+  }
+};
 
 const NotificationContext = createContext();
 
-const NotificationContextProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(
-    notificationReducer,
-    notificationInitialState
-  );
-  const value = useMemo(() => [state, dispatch], [state]);
+export const NotificationProvider = ({ children }) => {
+  const [notification, dispatch] = useReducer(notificationReducer, {
+    message: "",
+    error: "",
+  });
 
   return (
-    <NotificationContext.Provider value={value}>
+    <NotificationContext.Provider value={[notification, dispatch]}>
       {children}
     </NotificationContext.Provider>
   );
 };
 
-const useNotificationContext = () => {
+export const useNotification = () => {
   const context = useContext(NotificationContext);
   if (context === undefined) {
-    throw new Error("useAppContext must be used within a AppContextProvider");
+    throw new Error(
+      "useNotification must be used within a NotificationProvider"
+    );
   }
-
-  const [state, dispatch] = context;
-  const notificationContextActions = notificationActions(dispatch);
-  return { state, notificationContextActions };
+  return context;
 };
-
-export { useNotificationContext, NotificationContextProvider };

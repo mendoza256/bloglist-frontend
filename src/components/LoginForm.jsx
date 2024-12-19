@@ -1,35 +1,28 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import loginService from "../services/login";
 import blogService from "../services/blogs";
-import PropTypes from "prop-types";
-import { useDispatch } from "react-redux";
-import { setNotification } from "../reducers/notificationReducer";
-import { loginUser } from "../reducers/userReducer";
+import { useUser } from "../contexts/userContext";
 
 const LoginForm = ({ setError }) => {
-  const dispatch = useDispatch();
+  const [, userDispatch] = useUser();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async (event) => {
     event.preventDefault();
-
     try {
-      const userObject = {
+      const user = await loginService.login({
         username,
         password,
-      };
+      });
 
-      dispatch(loginUser(userObject));
-      setUsername("");
-      setPassword("");
-      dispatch(setNotification(`${username} logged in`, 2000));
+      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
+
+      blogService.setToken(user.token);
+      userDispatch({ type: "SET_USER", payload: user });
     } catch (exception) {
-      setError("Wrong credentials");
-      console.error(exception);
-      setTimeout(() => {
-        setError(null);
-      }, 5000);
+      setError({ type: "SET_ERROR", payload: "Wrong credentials" });
     }
   };
 

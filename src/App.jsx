@@ -6,48 +6,113 @@ import Notification from "./components/Notification";
 import Blogs from "./components/Blogs";
 import "./styles.css";
 import Togglable from "./components/Toggable";
-import { useDispatch, useSelector } from "react-redux";
-import { createNewBlog, intitializeBlogs } from "./reducers/blogsReducer";
-import { logoutUser, setUser } from "./reducers/userReducer";
-import { useNotificationContext } from "./Contexts/notificationContext";
+import { useDispatch } from "react-redux";
+import { intitializeBlogs } from "./reducers/blogsReducer";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useUser } from "./contexts/userContext";
+import { useNotification } from "./contexts/notificationContext";
 
 const App = () => {
+  const [user, userDispatch] = useUser();
+  const queryClient = useQueryClient();
   const dispatch = useDispatch();
-  const { notificationContextActions } = useNotificationContext();
-  const user = useSelector((state) => state.user);
+  const [_, dispatchNotification] = useNotification();
   const [sortByLikes, setSortByLikes] = useState(false);
   const blogFormRef = useRef();
-  const blogs = useSelector((state) =>
-    sortByLikes
-      ? state.blogs.toSorted((a, b) => b.likes - a.likes)
-      : state.blogs
-  );
+
+  const createBlogMutation = useMutation({
+    mutationFn: blogService.create,
+    onSuccess: (newBlog) => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+      dispatchNotification({
+        type: "SET_MESSAGE",
+        payload: `New blog created: ${newBlog.title} by ${newBlog.author}`,
+      });
+      blogFormRef.current.toggleVisibility();
+    },
+    onError: (error) => {
+      dispatchNotification({
+        type: "SET_ERROR",
+        payload: `Error creating blog: ${error}`,
+      });
+    },
+  });
+
+  const deleteBlogMutation = useMutation({
+    mutationFn: blogService.remove,
+    onSuccess: (_, deletedBlogId) => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+      const deletedBlog = blogs.find((blog) => blog.id === deletedBlogId);
+      dispatchNotification({
+        type: "SET_MESSAGE",
+        payload: `Deleted ${deletedBlog.title} by ${deletedBlog.author}!`,
+      });
+    },
+    onError: (error) => {
+      dispatchNotification({
+        type: "SET_ERROR",
+        payload: `You don't have permission to delete this blog, error: ${error}`,
+      });
+    },
+  });
+
+  const likeBlogMutation = useMutation({
+    mutationFn: blogService.update,
+    onSuccess: (_, likedBlogId) => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+      const likedBlog = blogs.find((blog) => blog.id === likedBlogId);
+      dispatchNotification({
+        type: "SET_MESSAGE",
+        payload: `Liked ${likedBlog.title} by ${likedBlog.author}!`,
+      });
+    },
+  });
+
+  const handleDeleteBlog = async (blog) => {
+    if (!window.confirm(`Delete ${blog.title} by ${blog.author}?`)) {
+      return;
+    }
+    deleteBlogMutation.mutate(blog.id);
+  };
+
+  const handleLikeBlog = async (blog) => {
+    likeBlogMutation.mutate(blog.id);
+  };
+
+  const { data: blogs = [] } = useQuery({
+    queryKey: ["blogs"],
+    queryFn: blogService.getAll,
+  });
 
   useEffect(() => {
     dispatch(intitializeBlogs());
   }, []);
 
   const addBlog = async (newBlog) => {
-    try {
-      dispatch(createNewBlog(newBlog));
-      notificationContextActions.createMessage(
-        `New blog created: ${newBlog.title} by ${newBlog.author}`
-      );
-
-      blogFormRef.current.toggleVisibility();
-    } catch (exception) {
-      notificationContextActions.createError("Error creating blog:", exception);
-    }
-
-    notificationContextActions.reset();
+    createBlogMutation.mutate(newBlog);
+    setTimeout(() => {
+      dispatchNotification({ type: "CLEAR" });
+    }, 3000);
   };
+
+  const sortedBlogs = sortByLikes
+    ? [...blogs].sort((a, b) => b.likes - a.likes)
+    : blogs;
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      dispatch(setUser(user));
+      userDispatch({ type: "SET_USER", payload: user });
       blogService.setToken(user.token);
+
+      dispatchNotification({
+        type: "SET_MESSAGE",
+        payload: `${user.name} logged in`,
+      });
+      setTimeout(() => {
+        dispatchNotification({ type: "CLEAR" });
+      }, 3000);
     }
   }, []);
 
@@ -56,9 +121,9 @@ const App = () => {
   };
 
   const logout = () => {
-    dispatch(logoutUser());
+    userDispatch({ type: "CLEAR_USER" });
     window.localStorage.removeItem("loggedBlogappUser");
-    window.location.reload();
+    blogService.setToken(null);
   };
 
   return (
@@ -68,10 +133,7 @@ const App = () => {
 
       {user === null && (
         <Togglable buttonLabel={"Log in"}>
-          <LoginForm
-            user={user}
-            setError={notificationContextActions.createError}
-          />
+          <LoginForm user={user} setError={dispatchNotification} />
         </Togglable>
       )}
       {user && (
@@ -85,7 +147,12 @@ const App = () => {
             Sort by Likes (Descending)
           </button>
 
-          <Blogs blogs={blogs} user={user} />
+          <Blogs
+            blogs={sortedBlogs}
+            user={user}
+            handleDeleteBlog={handleDeleteBlog}
+            handleLikeBlog={handleLikeBlog}
+          />
         </div>
       )}
       <div>
