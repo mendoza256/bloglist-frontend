@@ -11,6 +11,9 @@ import { intitializeBlogs } from "./reducers/blogsReducer";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "./contexts/userContext";
 import { useNotification } from "./contexts/notificationContext";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import Header from "./components/Header";
+import Users from "./components/Users";
 
 const App = () => {
   const [user, userDispatch] = useUser();
@@ -127,9 +130,8 @@ const App = () => {
   };
 
   return (
-    <>
-      <h1>Welcome to Blogs</h1>
-      <Notification />
+    <Router>
+      <Header />
 
       {user === null && (
         <Togglable buttonLabel={"Log in"}>
@@ -147,18 +149,26 @@ const App = () => {
             Sort by Likes (Descending)
           </button>
 
-          <Blogs
-            blogs={sortedBlogs}
-            user={user}
-            handleDeleteBlog={handleDeleteBlog}
-            handleLikeBlog={handleLikeBlog}
-          />
+          <Routes>
+            <Route path="/users" element={<Users blogs={sortedBlogs} />} />
+            <Route
+              path="/"
+              element={
+                <Blogs
+                  blogs={sortedBlogs}
+                  user={user}
+                  handleDeleteBlog={handleDeleteBlog}
+                  handleLikeBlog={handleLikeBlog}
+                />
+              }
+            />
+          </Routes>
         </div>
       )}
       <div>
         Blog app, Department of Computer Science, University of Helsinki 2023
       </div>
-    </>
+    </Router>
   );
 };
 
