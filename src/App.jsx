@@ -14,6 +14,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Header from "./components/Header";
 import Users from "./components/Users";
 import User from "./components/User";
+import Blog from "./components/Blog";
 
 const App = () => {
   const [user, userDispatch] = useUser();
@@ -66,12 +67,13 @@ const App = () => {
         likes: blog.likes + 1,
         user: blog.user.id,
       }),
-    onSuccess: (_, likedBlogId) => {
+    onSuccess: (updatedBlog) => {
       queryClient.invalidateQueries({ queryKey: ["blogs"] });
-      const likedBlog = blogs.find((blog) => blog.id === likedBlogId);
+      queryClient.invalidateQueries({ queryKey: ["blog", updatedBlog.id] });
+
       dispatchNotification({
         type: "SET_MESSAGE",
-        payload: `Liked ${likedBlog.title} by ${likedBlog.author}!`,
+        payload: `Liked ${updatedBlog.title} by ${updatedBlog.author}!`,
       });
     },
   });
@@ -124,10 +126,6 @@ const App = () => {
     }
   }, []);
 
-  const handleSortByLikes = () => {
-    setSortByLikes(!sortByLikes);
-  };
-
   const logout = () => {
     userDispatch({ type: "CLEAR_USER" });
     window.localStorage.removeItem("loggedBlogappUser");
@@ -155,17 +153,16 @@ const App = () => {
             <Route path="/users" element={<Users />} />
             <Route path="/users/:id" element={<User />} />
             <Route
-              path="/"
+              path="/blogs/:id"
               element={
-                <Blogs
-                  blogs={sortedBlogs}
+                <Blog
                   user={user}
-                  handleDeleteBlog={handleDeleteBlog}
                   handleLikeBlog={handleLikeBlog}
-                  handleSortByLikes={handleSortByLikes}
+                  handleDeleteBlog={handleDeleteBlog}
                 />
               }
             />
+            <Route path="/" element={<Blogs blogs={sortedBlogs} />} />
           </Routes>
         </div>
       )}
