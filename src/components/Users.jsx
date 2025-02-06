@@ -30,14 +30,20 @@ function Users() {
             </th>
           </tr>
         </thead>
-        <tbody>
-          {users?.map((user) => (
-            <tr key={user.id}>
-              <td>{user.name}</td>
-              <td>{user.blogs.length}</td>
-            </tr>
-          ))}
-        </tbody>
+        {isLoading && <p>Loading...</p>}
+        {error && <p>Error</p>}
+        {users && (
+          <tbody>
+            {users.map((user) => (
+              <tr key={user.id}>
+                <td>
+                  <a href={`/users/${user.id}`}>{user.name}</a>
+                </td>
+                <td>{user.blogs.length}</td>
+              </tr>
+            ))}
+          </tbody>
+        )}
       </table>
     </div>
   );

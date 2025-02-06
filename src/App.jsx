@@ -13,6 +13,7 @@ import { useNotification } from "./contexts/notificationContext";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Header from "./components/Header";
 import Users from "./components/Users";
+import User from "./components/User";
 
 const App = () => {
   const [user, userDispatch] = useUser();
@@ -152,6 +153,7 @@ const App = () => {
 
           <Routes>
             <Route path="/users" element={<Users />} />
+            <Route path="/users/:id" element={<User />} />
             <Route
               path="/"
               element={
