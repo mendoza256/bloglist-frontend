@@ -23,7 +23,7 @@ const Blog = ({ blog, handleLikeBlog, handleDeleteBlog, user }) => {
             <span className="likes" style={{ marginRight: "1rem" }}>
               likes: {blog.likes}
             </span>
-            <button className="like" onClick={() => handleLikeBlog(blog.id)}>
+            <button className="like" onClick={() => handleLikeBlog(blog)}>
               like
             </button>
             {blog.user.username === user.username && (

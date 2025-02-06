@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import blogService from "./services/blogs";
 import BlogForm from "./components/BlogForm";
 import LoginForm from "./components/LoginForm";
-import Notification from "./components/Notification";
 import Blogs from "./components/Blogs";
 import "./styles.css";
 import Togglable from "./components/Toggable";
@@ -60,7 +59,12 @@ const App = () => {
   });
 
   const likeBlogMutation = useMutation({
-    mutationFn: blogService.update,
+    mutationFn: (blog) =>
+      blogService.update(blog.id, {
+        ...blog,
+        likes: blog.likes + 1,
+        user: blog.user.id,
+      }),
     onSuccess: (_, likedBlogId) => {
       queryClient.invalidateQueries({ queryKey: ["blogs"] });
       const likedBlog = blogs.find((blog) => blog.id === likedBlogId);
@@ -79,7 +83,7 @@ const App = () => {
   };
 
   const handleLikeBlog = async (blog) => {
-    likeBlogMutation.mutate(blog.id);
+    likeBlogMutation.mutate(blog);
   };
 
   const { data: blogs = [] } = useQuery({
@@ -145,12 +149,9 @@ const App = () => {
             <BlogForm addBlog={addBlog} />
           </Togglable>
           <button onClick={logout}>logout</button>
-          <button onClick={handleSortByLikes}>
-            Sort by Likes (Descending)
-          </button>
 
           <Routes>
-            <Route path="/users" element={<Users blogs={sortedBlogs} />} />
+            <Route path="/users" element={<Users />} />
             <Route
               path="/"
               element={
@@ -159,6 +160,7 @@ const App = () => {
                   user={user}
                   handleDeleteBlog={handleDeleteBlog}
                   handleLikeBlog={handleLikeBlog}
+                  handleSortByLikes={handleSortByLikes}
                 />
               }
             />
