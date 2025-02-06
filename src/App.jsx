@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import blogService from "./services/blogs";
 import BlogForm from "./components/BlogForm";
-import LoginForm from "./components/LoginForm";
 import Blogs from "./components/Blogs";
 import "./styles.css";
 import Togglable from "./components/Toggable";
@@ -134,20 +133,13 @@ const App = () => {
 
   return (
     <Router>
-      <Header />
+      <Header user={user} logout={logout} />
 
-      {user === null && (
-        <Togglable buttonLabel={"Log in"}>
-          <LoginForm user={user} setError={dispatchNotification} />
-        </Togglable>
-      )}
       {user && (
         <div>
-          <p data-testid="user-logged-in">{user.name} logged in</p>
           <Togglable buttonLabel="new blog" ref={blogFormRef}>
             <BlogForm addBlog={addBlog} />
           </Togglable>
-          <button onClick={logout}>logout</button>
 
           <Routes>
             <Route path="/users" element={<Users />} />
