@@ -49,16 +49,6 @@ const Blog = ({ user, handleLikeBlog, handleDeleteBlog, handleAddComment }) => {
           )}
         </p>
         <div>
-          <p>{blog.user?.username}</p>
-        </div>
-        {blog.comments.length > 0 && (
-          <ul>
-            {blog.comments.map((comment, i) => (
-              <li key={i}>{comment}</li>
-            ))}
-          </ul>
-        )}
-        <div>
           <input
             type="text"
             placeholder="comment"
@@ -75,6 +65,16 @@ const Blog = ({ user, handleLikeBlog, handleDeleteBlog, handleAddComment }) => {
             add comment
           </button>
         </div>
+        <div>
+          <p>{blog.user?.username}</p>
+        </div>
+        {blog.comments.length > 0 && (
+          <ul>
+            {blog.comments.map((comment, i) => (
+              <li key={i}>{comment}</li>
+            ))}
+          </ul>
+        )}
       </>
     </div>
   );
