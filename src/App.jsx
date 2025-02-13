@@ -77,6 +77,26 @@ const App = () => {
     },
   });
 
+  const addCommentMutation = useMutation({
+    mutationFn: ({ blog, comment }) => {
+      console.log("addCommentMutation", blog, comment);
+      return blogService.addComment(blog.id, comment);
+    },
+    onSuccess: (updatedBlog) => {
+      queryClient.invalidateQueries({ queryKey: ["blog", updatedBlog.id] });
+      dispatchNotification({
+        type: "SET_MESSAGE",
+        payload: `Added comment to ${updatedBlog.title}`,
+      });
+    },
+    onError: (error) => {
+      dispatchNotification({
+        type: "SET_ERROR",
+        payload: `Error adding comment: ${error}`,
+      });
+    },
+  });
+
   const handleDeleteBlog = async (blog) => {
     if (!window.confirm(`Delete ${blog.title} by ${blog.author}?`)) {
       return;
@@ -86,6 +106,11 @@ const App = () => {
 
   const handleLikeBlog = async (blog) => {
     likeBlogMutation.mutate(blog);
+  };
+
+  const handleAddComment = async (blog, comment) => {
+    console.log("handleAddComment", blog, comment);
+    addCommentMutation.mutate({ blog, comment });
   };
 
   const { data: blogs = [] } = useQuery({
@@ -151,6 +176,7 @@ const App = () => {
                   user={user}
                   handleLikeBlog={handleLikeBlog}
                   handleDeleteBlog={handleDeleteBlog}
+                  handleAddComment={handleAddComment}
                 />
               }
             />

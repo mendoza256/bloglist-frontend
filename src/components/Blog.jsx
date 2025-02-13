@@ -1,9 +1,10 @@
-import React from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import blogsService from "../services/blogs";
+import { useState } from "react";
 
-const Blog = ({ user, handleLikeBlog, handleDeleteBlog }) => {
+const Blog = ({ user, handleLikeBlog, handleDeleteBlog, handleAddComment }) => {
+  const [comment, setComment] = useState("");
   const { id } = useParams();
   const {
     data: blog,
@@ -22,6 +23,8 @@ const Blog = ({ user, handleLikeBlog, handleDeleteBlog }) => {
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error</p>;
+
+  if (!blog) return <p>Blog not found</p>;
 
   return (
     <div style={blogStyles} data-testid={blog.id} className="blog">
@@ -47,6 +50,30 @@ const Blog = ({ user, handleLikeBlog, handleDeleteBlog }) => {
         </p>
         <div>
           <p>{blog.user?.username}</p>
+        </div>
+        {blog.comments.length > 0 && (
+          <ul>
+            {blog.comments.map((comment, i) => (
+              <li key={i}>{comment}</li>
+            ))}
+          </ul>
+        )}
+        <div>
+          <input
+            type="text"
+            placeholder="comment"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              handleAddComment(blog, comment);
+              setComment("");
+            }}
+          >
+            add comment
+          </button>
         </div>
       </>
     </div>
