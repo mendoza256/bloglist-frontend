@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 
 export const BlogForm = ({ addBlog }) => {
-  const [newBlog, setNewBlog] = useState({});
+  const [newBlog, setNewBlog] = useState({ title: "", author: "", url: "" });
 
   const createBlog = (event) => {
     event.preventDefault();
@@ -11,54 +11,56 @@ export const BlogForm = ({ addBlog }) => {
   };
 
   return (
-    <>
-      <h2>Create new blog</h2>
-      <form onSubmit={createBlog}>
+    <div className="bg-white p-6 rounded-lg shadow">
+      <h2 className="text-xl font-bold mb-4">Create New Blog</h2>
+      <form onSubmit={createBlog} className="space-y-4">
         <div>
-          <label htmlFor="title">Title:</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Title:
+          </label>
           <input
-            aria-label="title"
-            data-testid="title"
-            id="title"
             type="text"
-            placeholder="title"
             value={newBlog.title}
             onChange={({ target }) =>
               setNewBlog({ ...newBlog, title: target.value })
             }
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
           />
         </div>
         <div>
-          <label htmlFor="author">Author:</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Author:
+          </label>
           <input
-            aria-label="author"
-            data-testid="author"
-            id="author"
             type="text"
-            placeholder="author"
             value={newBlog.author}
             onChange={({ target }) =>
               setNewBlog({ ...newBlog, author: target.value })
             }
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
           />
         </div>
         <div>
-          <label htmlFor="url">Url:</label>
+          <label className="block text-sm font-medium text-gray-700">
+            URL:
+          </label>
           <input
-            aria-label="url"
-            data-testid="url"
             type="text"
-            placeholder="url"
             value={newBlog.url}
             onChange={({ target }) =>
               setNewBlog({ ...newBlog, url: target.value })
             }
-            id="url"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
           />
         </div>
-        <button type="submit">save</button>
+        <button
+          type="submit"
+          className="w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        >
+          Create
+        </button>
       </form>
-    </>
+    </div>
   );
 };
 

@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import Blog from "./Blog";
+import Blog from "./Blog_old";
 import userEvent from "@testing-library/user-event";
 
 test("renders content", () => {

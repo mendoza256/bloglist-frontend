@@ -13,6 +13,12 @@ const getAll = async () => {
   return response.data;
 };
 
+const getOne = async (id) => {
+  const request = axios.get(`${baseUrl}/${id}`);
+  const response = await request;
+  return response.data;
+};
+
 const create = async (newObject) => {
   const config = { headers: { Authorization: token } };
   const response = await axios.post(baseUrl, newObject, config);
@@ -32,4 +38,12 @@ const remove = async (id) => {
   return response.data;
 };
 
-export default { getAll, create, update, setToken, remove };
+const addComment = async (id, comment) => {
+  console.log("addComment", comment);
+  const request = axios.post(`${baseUrl}/${id}/comments`, { comment });
+  console.log("request", request);
+  const response = await request;
+  return response.data;
+};
+
+export default { getAll, create, update, setToken, remove, getOne, addComment };
