@@ -158,34 +158,43 @@ const App = () => {
 
   return (
     <Router>
-      <Header user={user} logout={logout} />
+      <div className="min-h-screen bg-gray-50">
+        <Header user={user} logout={logout} />
 
-      {user && (
-        <div>
-          <Togglable buttonLabel="new blog" ref={blogFormRef}>
-            <BlogForm addBlog={addBlog} />
-          </Togglable>
+        <main className="container mx-auto px-4 py-8">
+          {user && (
+            <div className="space-y-8">
+              <Togglable
+                buttonLabel="New blog"
+                ref={blogFormRef}
+                className="mb-8"
+              >
+                <BlogForm addBlog={addBlog} />
+              </Togglable>
 
-          <Routes>
-            <Route path="/users" element={<Users />} />
-            <Route path="/users/:id" element={<User />} />
-            <Route
-              path="/blogs/:id"
-              element={
-                <Blog
-                  user={user}
-                  handleLikeBlog={handleLikeBlog}
-                  handleDeleteBlog={handleDeleteBlog}
-                  handleAddComment={handleAddComment}
+              <Routes>
+                <Route path="/users" element={<Users />} />
+                <Route path="/users/:id" element={<User />} />
+                <Route
+                  path="/blogs/:id"
+                  element={
+                    <Blog
+                      user={user}
+                      handleLikeBlog={handleLikeBlog}
+                      handleDeleteBlog={handleDeleteBlog}
+                      handleAddComment={handleAddComment}
+                    />
+                  }
                 />
-              }
-            />
-            <Route path="/" element={<Blogs blogs={sortedBlogs} />} />
-          </Routes>
-        </div>
-      )}
-      <div>
-        Blog app, Department of Computer Science, University of Helsinki 2023
+                <Route path="/" element={<Blogs blogs={sortedBlogs} />} />
+              </Routes>
+            </div>
+          )}
+        </main>
+
+        <footer className="mt-auto py-6 text-center text-sm text-gray-600 border-t border-gray-200">
+          Blog app, Department of Computer Science, University of Helsinki 2023
+        </footer>
       </div>
     </Router>
   );
